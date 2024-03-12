@@ -13,7 +13,7 @@ public partial class WeatherArchiveRecord
 
     public decimal? Humidity { get; set; }
 
-    public byte? Pressure { get; set; }
+    public short? Pressure { get; set; }
 
     public decimal? DewPoint { get; set; }
 
@@ -25,7 +25,7 @@ public partial class WeatherArchiveRecord
 
     public short? CloudBase { get; set; }
 
-    public byte? HorizontalVisibility { get; set; }
+    public short? HorizontalVisibility { get; set; }
 
     public string? WeatherСonditions { get; set; }
 }
