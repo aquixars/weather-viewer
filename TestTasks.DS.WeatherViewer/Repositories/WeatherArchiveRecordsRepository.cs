@@ -2,7 +2,7 @@
 
 namespace TestTasks.DS.WeatherViewer.Repositories
 {
-    public class WeatherArchiveRecordsRepository
+    public class WeatherArchiveRecordsRepository : IDisposable
     {
         private readonly WeatherViewerDbContext _context;
 
@@ -11,32 +11,28 @@ namespace TestTasks.DS.WeatherViewer.Repositories
             _context = context;
         }
 
+        public void Dispose()
+        {
+            _context?.Dispose();
+        }
+
         public List<WeatherArchiveRecord> GetAll()
         {
-            using (_context)
-            {
-                return _context.WeatherArchiveRecords.ToList();
-            }
+            return _context.WeatherArchiveRecords.ToList();
         }
 
-        public long Add(WeatherArchiveRecord record)
+        public long Insert(WeatherArchiveRecord record)
         {
-            using (_context)
-            {
-                _context.WeatherArchiveRecords.Add(record);
-                _context.SaveChanges();
-                return record.Id;
-            }
+            _context.WeatherArchiveRecords.Add(record);
+            _context.SaveChanges();
+            return record.Id;
         }
 
-        public IEnumerable<long> AddRange(IEnumerable<WeatherArchiveRecord> records)
+        public IEnumerable<long> InsertRange(IEnumerable<WeatherArchiveRecord> records)
         {
-            using (_context)
-            {
-                _context.WeatherArchiveRecords.AddRange(records);
-                _context.SaveChanges();
-                return records.Select(r => r.Id);
-            }
+            _context.WeatherArchiveRecords.AddRange(records);
+            _context.SaveChanges();
+            return records.Select(r => r.Id);
         }
     }
 }
