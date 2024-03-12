@@ -1,13 +1,19 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    if (ViewData is not null)
+    {
+        ViewData["Title"] = "Home page";
+    }
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
-<form action="write/load">
-    <input type="submit" value="TestLoad" />
+
+<h3>Выберите файл для загрузки</h3>
+<form asp-controller="Write" asp-action="Load" method="post" enctype="multipart/form-data">
+    <input type="file" name="uploadedFiles" multiple /><br>
+    <input type="submit" value="Загрузить" />
 </form>
