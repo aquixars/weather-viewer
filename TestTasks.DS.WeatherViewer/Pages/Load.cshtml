@@ -1,0 +1,14 @@
+﻿@page
+@model IndexModel
+@{
+    if (ViewData is not null)
+    {
+        ViewData["Title"] = "Загрузка файлов";
+    }
+}
+
+<h3>Выберите файл для загрузки</h3>
+<form asp-controller="Write" asp-action="Load" method="post" enctype="multipart/form-data">
+    <input type="file" name="uploadedFiles" multiple /><br>
+    <input type="submit" value="Загрузить" />
+</form>

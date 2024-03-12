@@ -4,8 +4,8 @@ using TestTasks.DS.WeatherViewer.Repositories;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.AddScoped<WeatherViewerDbContext>();
 builder.Services.AddScoped<WeatherArchiveRecordsRepository>();

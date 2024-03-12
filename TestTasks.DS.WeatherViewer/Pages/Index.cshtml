@@ -3,17 +3,11 @@
 @{
     if (ViewData is not null)
     {
-        ViewData["Title"] = "Home page";
+        ViewData["Title"] = "Главная страница";
     }
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <a class="text-dark" asp-area="" asp-action="Index" asp-controller="Read">Просмотреть данные</a>
+    <a class="text-dark" asp-area="" asp-action="Index" asp-controller="Write">Загрузить данные</a>
 </div>
-
-<h3>Выберите файл для загрузки</h3>
-<form asp-controller="Write" asp-action="Load" method="post" enctype="multipart/form-data">
-    <input type="file" name="uploadedFiles" multiple /><br>
-    <input type="submit" value="Загрузить" />
-</form>
