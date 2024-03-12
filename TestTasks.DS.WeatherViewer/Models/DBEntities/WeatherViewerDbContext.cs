@@ -36,7 +36,10 @@ public partial class WeatherViewerDbContext : DbContext
             entity.Property(e => e.DewPoint)
                 .HasColumnType("decimal(18, 0)")
                 .HasColumnName("dewPoint");
-            entity.Property(e => e.HorizontalVisibility).HasColumnName("horizontalVisibility");
+            entity.Property(e => e.HorizontalVisibility)
+                .HasMaxLength(2000)
+                .IsUnicode(false)
+                .HasColumnName("horizontalVisibility");
             entity.Property(e => e.Humidity)
                 .HasColumnType("decimal(18, 0)")
                 .HasColumnName("humidity");

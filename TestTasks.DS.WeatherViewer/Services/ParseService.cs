@@ -14,22 +14,21 @@ namespace TestTasks.DS.WeatherViewer.Services
             //    throw new Exception("Некорректные входные данные!");
             //}
 
-            var cells = tableRow.Cells;
-
             // todo : culture
+            // todo : fix code spam
             var result = new WeatherArchiveRecord()
             {
-                Created = DateTime.Parse($"{GetCellValue(cells[0])} {GetCellValue(cells[1])}"),
-                Temperature = decimal.Parse(GetCellValue(cells[2])),
-                Humidity = decimal.Parse(GetCellValue(cells[3])),
-                DewPoint = decimal.Parse(GetCellValue(cells[4])),
-                Pressure = short.Parse(GetCellValue(cells[5])),
-                WindDirection = GetCellValue(cells[6]),
-                WindSpeed = byte.Parse(GetCellValue(cells[7])),
-                Cloudiness = byte.Parse(GetCellValue(cells[8])),
-                CloudBase = short.Parse(GetCellValue(cells[9])),
-                HorizontalVisibility = short.Parse(GetCellValue(cells[10])),
-                WeatherСonditions = GetCellValue(cells[11])
+                Created = DateTime.Parse($"{GetCellValue(tableRow.GetCell(0, MissingCellPolicy.RETURN_NULL_AND_BLANK))} {GetCellValue(tableRow.GetCell(1, MissingCellPolicy.RETURN_NULL_AND_BLANK))}"),
+                Temperature = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(2, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : decimal.Parse(GetCellValue(tableRow.GetCell(2, MissingCellPolicy.RETURN_NULL_AND_BLANK))),
+                Humidity = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(3, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : decimal.Parse(GetCellValue(tableRow.GetCell(3, MissingCellPolicy.RETURN_NULL_AND_BLANK))),
+                DewPoint = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(4, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : decimal.Parse(GetCellValue(tableRow.GetCell(4, MissingCellPolicy.RETURN_NULL_AND_BLANK))),
+                Pressure = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(5, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : short.Parse(GetCellValue(tableRow.GetCell(5, MissingCellPolicy.RETURN_NULL_AND_BLANK))),
+                WindDirection = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(6, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : GetCellValue(tableRow.GetCell(6, MissingCellPolicy.RETURN_NULL_AND_BLANK)),
+                WindSpeed = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(7, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : byte.Parse(GetCellValue(tableRow.GetCell(7, MissingCellPolicy.RETURN_NULL_AND_BLANK))),
+                Cloudiness = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(8, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : byte.Parse(GetCellValue(tableRow.GetCell(8, MissingCellPolicy.RETURN_NULL_AND_BLANK))),
+                CloudBase = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(9, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : short.Parse(GetCellValue(tableRow.GetCell(9, MissingCellPolicy.RETURN_NULL_AND_BLANK))),
+                HorizontalVisibility = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(10, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : GetCellValue(tableRow.GetCell(10, MissingCellPolicy.RETURN_NULL_AND_BLANK)),
+                WeatherСonditions = string.IsNullOrWhiteSpace(GetCellValue(tableRow.GetCell(11, MissingCellPolicy.RETURN_NULL_AND_BLANK))) ? null : GetCellValue(tableRow.GetCell(11, MissingCellPolicy.RETURN_NULL_AND_BLANK))
             };
 
             return result;
@@ -37,6 +36,11 @@ namespace TestTasks.DS.WeatherViewer.Services
 
         private static string GetCellValue(ICell cell)
         {
+            if (cell is null)
+            {
+                return string.Empty;
+            }
+
             // todo : check for other types
             switch (cell.CellType)
             {

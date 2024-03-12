@@ -25,7 +25,7 @@ public partial class WeatherArchiveRecord
 
     public short? CloudBase { get; set; }
 
-    public short? HorizontalVisibility { get; set; }
+    public string? HorizontalVisibility { get; set; }
 
     public string? WeatherСonditions { get; set; }
 }

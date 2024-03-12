@@ -2,12 +2,21 @@
 using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using TestTasks.DS.WeatherViewer.Repositories;
+using TestTasks.DS.WeatherViewer.Services;
 
 namespace TestTasks.DS.WeatherViewer.Controllers
 {
     [Route("[controller]/[action]")]
     public class WriteController : Controller
     {
+        private WeatherArchiveRecordsRepository _recordsRepository;
+
+        public WriteController(WeatherArchiveRecordsRepository recordsRepository)
+        {
+            _recordsRepository = recordsRepository;
+        }
+
         public IActionResult Load(/* file */)
         {
             try
@@ -21,17 +30,23 @@ namespace TestTasks.DS.WeatherViewer.Controllers
                     workbook = new XSSFWorkbook(fileStream);
                 }
 
-                Console.WriteLine(SecretsReader.ReadSection<string>("dbConnectionString"));
+                const int headerRowsAmount = 4;
+                // todo: optimize
+                for (int j = 0; j != workbook.NumberOfSheets; j++)
+                {
+                    // Получение листа
+                    ISheet sheet = workbook.GetSheetAt(j);
 
-                // Получение листа
-                ISheet sheet = workbook.GetSheetAt(0);
-
-                // Чтение данных из ячейки
-                IRow row = sheet.GetRow(0);
-                string cellValue = row.GetCell(0).StringCellValue;
-
-                // Вывод данных ячейки
-                Console.WriteLine(cellValue);
+                    for (int k = sheet.FirstRowNum + headerRowsAmount; k != sheet.LastRowNum + 1; k++)
+                    {
+                        // Чтение данных из ячейки
+                        IRow row = sheet.GetRow(k);
+                        var parsedRow = ParseService.ParseRow(row);
+                        _recordsRepository.Insert(parsedRow);
+                        // Вывод данных ячейки
+                        Console.WriteLine($"Вставили строку с данными от {parsedRow.Created}");
+                    }
+                }
 
                 return View();
             }
