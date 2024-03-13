@@ -75,7 +75,7 @@ namespace TestTasks.DS.WeatherViewer.Controllers
                 throw new InvalidOperationException("Отсутствует файл");
 
             string path = SecretsReader.ReadSection<string>("uploadedFilesDirectory").TrimEnd(Path.DirectorySeparatorChar);
-            var folderName = Path.Combine(path, "file_", DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss"));
+            var folderName = Path.Combine(path, $"file_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}");
             var folderInfo = new DirectoryInfo(folderName);
 
             folderInfo.Create();
