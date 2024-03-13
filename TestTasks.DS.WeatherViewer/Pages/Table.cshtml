@@ -29,6 +29,12 @@
     .glyphicon-chevron-left:before {
         content: "\f053";
     }
+
+    .pagination-wrapper {
+        margin-bottom: 2rem;
+        position: fixed;
+        bottom: 0;
+    }
 </style>
 
 @if (Model.Records.Any())
@@ -71,25 +77,27 @@
         </table>
     </table>
 
-    <div>Страница [@Model.PageInfo.PageNumber / @Model.PageInfo.TotalPages]</div>
-    if (Model.PageInfo.HasPreviousPage)
-    {
-        <a asp-controller="Read" asp-action="Index"
-           asp-route-page="@(Model.PageInfo.PageNumber - 1)"
-           class="btn btn-outline-dark">
-            <i class="glyphicon glyphicon-chevron-left"></i>
-            Назад
-        </a>
-    }
-    @if (Model.PageInfo.HasNextPage)
-    {
-        <a asp-controller="Read" asp-action="Index"
-           asp-route-page="@(Model.PageInfo.PageNumber + 1)"
-           class="btn btn-outline-dark">
-            Вперед
-            <i class="glyphicon glyphicon-chevron-right"></i>
-        </a>
-    }
+    <div class="pagination-wrapper">
+        <div>Страница [@Model.PageInfo.PageNumber / @Model.PageInfo.TotalPages]</div>
+        @if (Model.PageInfo.HasPreviousPage)
+        {
+            <a asp-controller="Read" asp-action="Index"
+               asp-route-page="@(Model.PageInfo.PageNumber - 1)"
+               class="btn btn-outline-dark">
+                <i class="glyphicon glyphicon-chevron-left"></i>
+                Назад
+            </a>
+        }
+        @if (Model.PageInfo.HasNextPage)
+        {
+            <a asp-controller="Read" asp-action="Index"
+               asp-route-page="@(Model.PageInfo.PageNumber + 1)"
+               class="btn btn-outline-dark">
+                Вперед
+                <i class="glyphicon glyphicon-chevron-right"></i>
+            </a>
+        }
+    </div>
 }
 else
 {
