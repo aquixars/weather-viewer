@@ -8,7 +8,7 @@ namespace TestTasks.DS.WeatherViewer.Controllers
     public class ReadController : Controller
     {
         private WeatherArchiveRecordsRepository _recordsRepository;
-        private const int pageSize = 10;
+        private const int pageSize = 7;
 
         public ReadController(WeatherArchiveRecordsRepository recordsRepository)
         {
@@ -16,15 +16,17 @@ namespace TestTasks.DS.WeatherViewer.Controllers
         }
 
         [HttpGet("{page}")]
-        public IActionResult Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1)
         {
-            // todo : make it async
-            var records = _recordsRepository.GetAll();
+            var records = await _recordsRepository.GetAllByPageAsync(pageSize, page);
+            var count = await _recordsRepository.GetCountAsync();
+
             var tableModel = new TableViewModel
             {
-                Records = records.Skip((page - 1) * pageSize).Take(pageSize),
-                PageInfo = new PageInfo(records.Count, page, pageSize)
+                Records = records,
+                PageInfo = new PageInfo(count, page, pageSize)
             };
+
             return View("~/Pages/Table.cshtml", tableModel);
         }
     }

@@ -1,4 +1,6 @@
-﻿using TestTasks.DS.WeatherViewer.Models.DBEntities;
+﻿using Microsoft.EntityFrameworkCore;
+using NPOI.HSSF.Record;
+using TestTasks.DS.WeatherViewer.Models.DBEntities;
 
 namespace TestTasks.DS.WeatherViewer.Repositories
 {
@@ -16,9 +18,23 @@ namespace TestTasks.DS.WeatherViewer.Repositories
             _context?.Dispose();
         }
 
-        public List<WeatherArchiveRecord> GetAll()
+        public async Task<List<WeatherArchiveRecord>> GetAllByPageAsync(int pageSize, int pageNumber)
         {
-            return _context.WeatherArchiveRecords.ToList();
+            var result = await _context.WeatherArchiveRecords
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return result;
+        }
+
+        // todo: speed it up
+        public async Task<int> GetCountAsync()
+        {
+            var result = await _context.WeatherArchiveRecords
+                .CountAsync();
+
+            return result;
         }
 
         public long Insert(WeatherArchiveRecord record)
