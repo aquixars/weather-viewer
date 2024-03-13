@@ -26,65 +26,49 @@ namespace TestTasks.DS.WeatherViewer.Controllers
         [HttpPost]
         public async Task<IActionResult> Load(IFormFileCollection uploadedFiles)
         {
-            List<WeatherArchiveRecord> recordsToInsert = new();
-            try
+            if (uploadedFiles is null || uploadedFiles.Count == 0)
             {
-                if (uploadedFiles is null || uploadedFiles.Count == 0)
+                return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Некорректно переданы файлы" });
+            }
+
+            List<WeatherArchiveRecord> recordsToInsert = new();
+
+            foreach (var uploadedFile in uploadedFiles)
+            {
+                if (uploadedFile is null)
                 {
-                    return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Файлы не были загружены" });
+                    continue;
                 }
 
-                foreach (var uploadedFile in uploadedFiles)
+                try
                 {
-                    if (uploadedFile is null)
+                    var file = await SaveUploadedFile(uploadedFile);
+
+                    if (file is null)
                     {
                         continue;
                     }
 
-                    var file = await SaveFile(uploadedFile);
-
-                    IWorkbook workbook;
-                    using (FileStream fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
-                    {
-                        workbook = new XSSFWorkbook(fileStream);
-                    }
-
-                    const int headerRowsAmount = 4;
-                    for (int sheetNumber = 0; sheetNumber != workbook.NumberOfSheets; sheetNumber++)
-                    {
-                        ISheet sheet = workbook.GetSheetAt(sheetNumber);
-
-                        for (int rowNumber = sheet.FirstRowNum + headerRowsAmount; rowNumber != sheet.LastRowNum + 1; rowNumber++)
-                        {
-                            IRow row = sheet.GetRow(rowNumber);
-                            var parsedRow = ParseService.ParseRow(row);
-                            recordsToInsert.Add(parsedRow);
-                        }
-                    }
+                    GetRowsFromFile(file, ref recordsToInsert);
                 }
-            }
-            catch (Exception ex)
-            {
-                // log ex
-                return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Ошибка при загрузке данных" });
-            }
-            finally
-            {
-                if (recordsToInsert.Count != 0)
+                catch (Exception ex)
                 {
-                    await _recordsRepository.InsertRangeAsync(recordsToInsert);
+                    // log ex
+                    // file failed, continuing
+                    continue;
                 }
             }
 
             if (recordsToInsert.Count != 0)
             {
-                return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Данные успешно загружены!" });
+                var amount = (await _recordsRepository.InsertRangeAsync(recordsToInsert)).Count();
+                return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = $"Успешно! Строк было загружено: {amount}" });
             }
 
-            return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Данные не были загружены" });
+            return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "В загруженных файлах не найдены корректные данные" });
         }
 
-        private async Task<FileInfo> SaveFile(IFormFile file)
+        private async Task<FileInfo> SaveUploadedFile(IFormFile file)
         {
             string path = SecretsReader.ReadSection<string>("uploadedFilesDirectory").TrimEnd(Path.DirectorySeparatorChar);
             var folderName = Path.Combine(path, $"file_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}");
@@ -99,6 +83,47 @@ namespace TestTasks.DS.WeatherViewer.Controllers
             var fileInfo = new FileInfo(filePath);
 
             return fileInfo;
+        }
+
+        private void GetRowsFromFile(FileInfo file, ref List<WeatherArchiveRecord> rowsStorage)
+        {
+            const int headerRowsAmount = 4;
+
+            IWorkbook workbook;
+            using (FileStream fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
+            {
+                workbook = new XSSFWorkbook(fileStream);
+            }
+
+            for (int sheetNumber = 0; sheetNumber != workbook.NumberOfSheets; sheetNumber++)
+            {
+                try
+                {
+                    ISheet sheet = workbook.GetSheetAt(sheetNumber);
+
+                    for (int rowNumber = sheet.FirstRowNum + headerRowsAmount; rowNumber != sheet.LastRowNum + 1; rowNumber++)
+                    {
+                        try
+                        {
+                            IRow row = sheet.GetRow(rowNumber);
+                            var parsedRow = ParseService.ParseRow(row);
+                            rowsStorage.Add(parsedRow);
+                        }
+                        catch (Exception ex)
+                        {
+                            // log ex
+                            // row failed, continuing
+                            continue;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // log ex
+                    // sheet failed, continuing
+                    continue;
+                }
+            }
         }
     }
 }
