@@ -35,6 +35,10 @@
         position: fixed;
         bottom: 0;
     }
+
+    .message {
+        color: red;
+    }
 </style>
 
 @if (Model.Records.Any())
@@ -76,30 +80,54 @@
             </tbody>
         </table>
     </table>
-
-    <div class="pagination-wrapper">
-        <div>Страница [@Model.PageInfo.PageNumber / @Model.PageInfo.TotalPages]</div>
-        @if (Model.PageInfo.HasPreviousPage)
-        {
-            <a asp-controller="Read" asp-action="Index"
-               asp-route-page="@(Model.PageInfo.PageNumber - 1)"
-               class="btn btn-outline-dark">
-                <i class="glyphicon glyphicon-chevron-left"></i>
-                Назад
-            </a>
-        }
-        @if (Model.PageInfo.HasNextPage)
-        {
-            <a asp-controller="Read" asp-action="Index"
-               asp-route-page="@(Model.PageInfo.PageNumber + 1)"
-               class="btn btn-outline-dark">
-                Вперед
-                <i class="glyphicon glyphicon-chevron-right"></i>
-            </a>
-        }
-    </div>
 }
 else
 {
     <div>Данные для просмотра отсутствуют!</div>
 }
+
+<div class="message">@Model.Message</div>
+
+<div class="view-form-wrapper">
+    <form class="form-wrapper" method="get" asp-controller="Read" asp-action="Index">
+        <div class="form-input-wrapper">
+            <div class="form-input-item">
+                <label>Месяц</label>
+                <input type="number" name="month" value="@Model.FilterInfo.Month" />
+            </div>
+            <div class="form-input-item">
+                <label>Год</label>
+                <input type="number" name="year" value="@Model.FilterInfo.Year" />
+            </div>
+        </div>
+        <input type="number" name="pageNumber" value="1" hidden />
+        <button class="btn submit-btn" type="submit">Применить</button>
+    </form>
+</div>
+
+<div class="pagination-wrapper">
+    <div>Страница [@Model.PageInfo.PageNumber / @Model.PageInfo.TotalPages]</div>
+    @if (Model.PageInfo.HasPreviousPage)
+    {
+        <a asp-controller="Read" asp-action="Index"
+           asp-route-pageNumber="@(Model.PageInfo.PageNumber - 1)"
+           asp-route-month="@Model.FilterInfo.Month"
+           asp-route-year="@Model.FilterInfo.Year"
+           class="btn btn-outline-dark">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Назад
+        </a>
+
+    }
+    @if (Model.PageInfo.HasNextPage)
+    {
+        <a asp-controller="Read" asp-action="Index"
+           asp-route-pageNumber="@(Model.PageInfo.PageNumber + 1)"
+           asp-route-month="@Model.FilterInfo.Month"
+           asp-route-year="@Model.FilterInfo.Year"
+           class="btn btn-outline-dark">
+            Вперед
+            <i class="glyphicon glyphicon-chevron-right"></i>
+        </a>
+    }
+</div>

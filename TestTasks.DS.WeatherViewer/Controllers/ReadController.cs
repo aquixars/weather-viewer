@@ -15,17 +15,27 @@ namespace TestTasks.DS.WeatherViewer.Controllers
             _recordsRepository = recordsRepository;
         }
 
-        [HttpGet("{page}")]
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int pageNumber = 1, int month = 0, int year = 0)
         {
-            var records = await _recordsRepository.GetAllByPageAsync(pageSize, page);
-            var count = await _recordsRepository.GetCountAsync();
+            var tableModel = new TableViewModel();
 
-            var tableModel = new TableViewModel
+            if (month < 0 || month > 12)
             {
-                Records = records,
-                PageInfo = new PageInfo(count, page, pageSize)
-            };
+                tableModel.Message += "Некорректно указан месяц!\n";
+                month = 0;
+            }
+
+            if (year < 0 || year > DateTime.Now.Year)
+            {
+                tableModel.Message += "Некорректно указан год!\n";
+                year = 0;
+            }
+
+            var recordsData = await _recordsRepository.GetAllByPageModel(pageNumber, pageSize, month, year);
+
+            tableModel.Records = recordsData.records;
+            tableModel.PageInfo = new PageInfo(recordsData.totalCount, pageNumber, pageSize);
+            tableModel.FilterInfo = new FilterInfo() { Month = month, Year = year };
 
             return View("~/Pages/Table.cshtml", tableModel);
         }

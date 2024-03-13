@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TestTasks.DS.WeatherViewer.Models.DBEntities;
+using TestTasks.DS.WeatherViewer.Pages;
 
 namespace TestTasks.DS.WeatherViewer.Repositories
 {
@@ -17,23 +18,27 @@ namespace TestTasks.DS.WeatherViewer.Repositories
             _context?.Dispose();
         }
 
-        public async Task<List<WeatherArchiveRecord>> GetAllByPageAsync(int pageSize, int pageNumber)
+        public async Task<(List<WeatherArchiveRecord> records, int totalCount)> GetAllByPageModel(int pageNumber, int pageSize, int month, int year)
         {
-            var result = await _context.WeatherArchiveRecords
-                .Skip((pageNumber - 1) * pageSize)
+            IQueryable<WeatherArchiveRecord> query = _context.WeatherArchiveRecords;
+
+            if (year != 0)
+            {
+                query = query.Where(r => r.Created.HasValue && r.Created.Value.Year == year);
+            }
+
+            if (month != 0)
+            {
+                query = query.Where(r => r.Created.HasValue && r.Created.Value.Month == month);
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var result = await query.Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            return result;
-        }
-
-        public async Task<int> GetCountAsync()
-        {
-            var result = await _context.WeatherArchiveRecords
-                .Select(r => r.Id)
-                .CountAsync();
-
-            return result;
+            return (result, totalCount);
         }
 
         public async Task<IEnumerable<long>> InsertRangeAsync(IEnumerable<WeatherArchiveRecord> records)
