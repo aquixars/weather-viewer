@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using TestTasks.DS.WeatherViewer.Models.DBEntities;
+using TestTasks.DS.WeatherViewer.Pages;
 using TestTasks.DS.WeatherViewer.Repositories;
 using TestTasks.DS.WeatherViewer.Services;
 
@@ -18,17 +20,18 @@ namespace TestTasks.DS.WeatherViewer.Controllers
 
         public IActionResult Index()
         {
-            return View("~/Pages/Load.cshtml");
+            return View("~/Pages/Load.cshtml", new LoadModel());
         }
 
         [HttpPost]
         public async Task<IActionResult> Load(IFormFileCollection uploadedFiles)
         {
+            List<WeatherArchiveRecord> recordsToInsert = new();
             try
             {
                 if (uploadedFiles is null || uploadedFiles.Count == 0)
                 {
-                    return View("~/Pages/Load.cshtml");
+                    return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Файлы не были загружены" });
                 }
 
                 foreach (var uploadedFile in uploadedFiles)
@@ -47,33 +50,42 @@ namespace TestTasks.DS.WeatherViewer.Controllers
                     }
 
                     const int headerRowsAmount = 4;
-                    // todo: optimize
-                    for (int j = 0; j != workbook.NumberOfSheets; j++)
+                    for (int sheetNumber = 0; sheetNumber != workbook.NumberOfSheets; sheetNumber++)
                     {
-                        ISheet sheet = workbook.GetSheetAt(j);
+                        ISheet sheet = workbook.GetSheetAt(sheetNumber);
 
-                        for (int k = sheet.FirstRowNum + headerRowsAmount; k != sheet.LastRowNum + 1; k++)
+                        for (int rowNumber = sheet.FirstRowNum + headerRowsAmount; rowNumber != sheet.LastRowNum + 1; rowNumber++)
                         {
-                            IRow row = sheet.GetRow(k);
+                            IRow row = sheet.GetRow(rowNumber);
                             var parsedRow = ParseService.ParseRow(row);
-                            _recordsRepository.Insert(parsedRow);
+                            recordsToInsert.Add(parsedRow);
                         }
                     }
                 }
-
-                return View("~/Pages/Load.cshtml");
             }
             catch (Exception ex)
             {
                 // log ex
-                return BadRequest();
+                return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Ошибка при загрузке данных" });
             }
+            finally
+            {
+                if (recordsToInsert.Count != 0)
+                {
+                    await _recordsRepository.InsertRangeAsync(recordsToInsert);
+                }
+            }
+
+            if (recordsToInsert.Count != 0)
+            {
+                return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Данные успешно загружены!" });
+            }
+
+            return View("~/Pages/Load.cshtml", new LoadModel() { ResultMessage = "Данные не были загружены" });
         }
+
         private async Task<FileInfo> SaveFile(IFormFile file)
         {
-            if (file == null)
-                throw new InvalidOperationException("Отсутствует файл");
-
             string path = SecretsReader.ReadSection<string>("uploadedFilesDirectory").TrimEnd(Path.DirectorySeparatorChar);
             var folderName = Path.Combine(path, $"file_{DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss")}");
             var folderInfo = new DirectoryInfo(folderName);

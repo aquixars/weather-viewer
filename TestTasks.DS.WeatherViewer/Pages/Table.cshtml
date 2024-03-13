@@ -6,87 +6,92 @@
     }
 }
 <style>
-@@font-face {
-    font-family: 'FontAwesome';
-    src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2') format('woff2'), 
-    url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff') format('woff'), 
-    url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal
-}
+    @@font-face {
+        font-family: 'FontAwesome';
+        src: url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff2') format('woff2'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff') format('woff'), url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/fonts/fontawesome-webfont.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal
+    }
 
-.glyphicon {
-    display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
-    font-size: inherit;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale
-}
+    .glyphicon {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale
+    }
 
-.glyphicon-chevron-right:before {
-    content: "\f054";
-}
+    .glyphicon-chevron-right:before {
+        content: "\f054";
+    }
 
-.glyphicon-chevron-left:before {
-    content: "\f053";
-}
+    .glyphicon-chevron-left:before {
+        content: "\f053";
+    }
 </style>
 
-<table class="table">
+@if (Model.Records.Any())
+{
     <table class="table">
-    <thead>
-        <tr>
-            <th>Дата</th>
-            <th>Температура</th>
-            <th>Влажность</th>
-            <th>Давление</th>
-            <th>Точка росы</th>
-            <th>Направление ветра</th>
-            <th>Скорость ветра</th>
-            <th>Облачность</th>
-            <th>Нижняя граница облачности</th>
-            <th>Горизонтальная видимость</th>
-            <th>Погодные условия</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var record in Model.Records)
-        {
-            <tr>
-                <td>@record.Created</td>
-                <td>@record.Temperature</td>
-                <td>@record.Humidity</td>
-                <td>@record.Pressure</td>
-                <td>@record.DewPoint</td>
-                <td>@record.WindDirection</td>
-                <td>@record.WindSpeed</td>
-                <td>@record.Cloudiness</td>
-                <td>@record.CloudBase</td>
-                <td>@record.HorizontalVisibility</td>
-                <td>@record.WeatherСonditions</td>
-            </tr>
-        }
-    </tbody>
-</table>
-</table>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Температура</th>
+                    <th>Влажность</th>
+                    <th>Давление</th>
+                    <th>Точка росы</th>
+                    <th>Направление ветра</th>
+                    <th>Скорость ветра</th>
+                    <th>Облачность</th>
+                    <th>Нижняя граница облачности</th>
+                    <th>Горизонтальная видимость</th>
+                    <th>Погодные условия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var record in Model.Records)
+                {
+                    <tr>
+                        <td>@record.Created</td>
+                        <td>@record.Temperature</td>
+                        <td>@record.Humidity</td>
+                        <td>@record.Pressure</td>
+                        <td>@record.DewPoint</td>
+                        <td>@record.WindDirection</td>
+                        <td>@record.WindSpeed</td>
+                        <td>@record.Cloudiness</td>
+                        <td>@record.CloudBase</td>
+                        <td>@record.HorizontalVisibility</td>
+                        <td>@record.WeatherСonditions</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </table>
 
-Страница [ @Model.PageInfo.PageNumber / @Model.PageInfo.TotalPages ]
-@if (Model.PageInfo.HasPreviousPage)
-{
-    <a asp-controller="Read" asp-action="Index"
-       asp-route-page="@(Model.PageInfo.PageNumber - 1)"
-       class="btn btn-outline-dark">
-        <i class="glyphicon glyphicon-chevron-left"></i>
-        Назад
-    </a>
+    <div>Страница [@Model.PageInfo.PageNumber / @Model.PageInfo.TotalPages]</div>
+    if (Model.PageInfo.HasPreviousPage)
+    {
+        <a asp-controller="Read" asp-action="Index"
+           asp-route-page="@(Model.PageInfo.PageNumber - 1)"
+           class="btn btn-outline-dark">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Назад
+        </a>
+    }
+    @if (Model.PageInfo.HasNextPage)
+    {
+        <a asp-controller="Read" asp-action="Index"
+           asp-route-page="@(Model.PageInfo.PageNumber + 1)"
+           class="btn btn-outline-dark">
+            Вперед
+            <i class="glyphicon glyphicon-chevron-right"></i>
+        </a>
+    }
 }
-@if (Model.PageInfo.HasNextPage)
+else
 {
-    <a asp-controller="Read" asp-action="Index"
-       asp-route-page="@(Model.PageInfo.PageNumber + 1)"
-       class="btn btn-outline-dark">
-        Вперед
-        <i class="glyphicon glyphicon-chevron-right"></i>
-    </a>
+    <div>Данные для просмотра отсутствуют!</div>
 }

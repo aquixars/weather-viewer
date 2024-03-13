@@ -6,8 +6,15 @@
     }
 }
 
-<h3>Выберите файл для загрузки</h3>
-<form asp-controller="Write" asp-action="Load" method="post" enctype="multipart/form-data">
-    <input type="file" name="uploadedFiles" multiple /><br>
-    <input type="submit" value="Загрузить" />
-</form>
+@if (!string.IsNullOrWhiteSpace(Model.ResultMessage))
+{
+    <div>@Model.ResultMessage</div>
+}
+else
+{
+    <h3>Выберите файл для загрузки</h3>
+    <form asp-controller="Write" asp-action="Load" method="post" enctype="multipart/form-data">
+        <input type="file" name="uploadedFiles" multiple /><br>
+        <input type="submit" value="Загрузить" />
+    </form>
+}

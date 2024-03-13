@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NPOI.HSSF.Record;
 using TestTasks.DS.WeatherViewer.Models.DBEntities;
 
 namespace TestTasks.DS.WeatherViewer.Repositories
@@ -32,22 +31,16 @@ namespace TestTasks.DS.WeatherViewer.Repositories
         public async Task<int> GetCountAsync()
         {
             var result = await _context.WeatherArchiveRecords
+                .Select(r => r.Id)
                 .CountAsync();
 
             return result;
         }
 
-        public long Insert(WeatherArchiveRecord record)
+        public async Task<IEnumerable<long>> InsertRangeAsync(IEnumerable<WeatherArchiveRecord> records)
         {
-            _context.WeatherArchiveRecords.Add(record);
-            _context.SaveChanges();
-            return record.Id;
-        }
-
-        public IEnumerable<long> InsertRange(IEnumerable<WeatherArchiveRecord> records)
-        {
-            _context.WeatherArchiveRecords.AddRange(records);
-            _context.SaveChanges();
+            await _context.WeatherArchiveRecords.AddRangeAsync(records);
+            await _context.SaveChangesAsync();
             return records.Select(r => r.Id);
         }
     }
