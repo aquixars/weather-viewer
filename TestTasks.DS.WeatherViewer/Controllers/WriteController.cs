@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using TestTasks.DS.WeatherViewer.Models.DBEntities;
@@ -89,11 +90,7 @@ namespace TestTasks.DS.WeatherViewer.Controllers
         {
             const int headerRowsAmount = 4;
 
-            IWorkbook workbook;
-            using (FileStream fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
-            {
-                workbook = new XSSFWorkbook(fileStream);
-            }
+            IWorkbook workbook = CreateWorkbookFromFile(file);
 
             for (int sheetNumber = 0; sheetNumber != workbook.NumberOfSheets; sheetNumber++)
             {
@@ -123,6 +120,17 @@ namespace TestTasks.DS.WeatherViewer.Controllers
                     // sheet failed, continuing
                     continue;
                 }
+            }
+        }
+
+        private IWorkbook CreateWorkbookFromFile(FileInfo file)
+        {
+            using (FileStream fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
+            {
+                if (file.Extension.ToLowerInvariant() == ".xls")
+                    return new HSSFWorkbook(fileStream); // excel 97-2003
+                else
+                    return new XSSFWorkbook(fileStream); // other
             }
         }
     }

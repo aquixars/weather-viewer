@@ -27,7 +27,6 @@ namespace TestTasks.DS.WeatherViewer.Repositories
             return result;
         }
 
-        // todo: speed it up
         public async Task<int> GetCountAsync()
         {
             var result = await _context.WeatherArchiveRecords
