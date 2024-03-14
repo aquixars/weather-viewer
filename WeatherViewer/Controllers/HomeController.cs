@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace TestTasks.DS.WeatherViewer.Controllers
+namespace WeatherViewer.Controllers
 {
     [Route("[controller]/[action]")]
     public class HomeController : Controller

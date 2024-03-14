@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
-namespace TestTasks.DS.WeatherViewer.Models.DBEntities;
+namespace WeatherViewer.Models.DBEntities;
 
 public partial class WeatherViewerDbContext : DbContext
 {

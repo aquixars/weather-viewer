@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace TestTasks.DS.WeatherViewer.Pages
+namespace WeatherViewer.Pages
 {
     public class LoadModel : PageModel
     {

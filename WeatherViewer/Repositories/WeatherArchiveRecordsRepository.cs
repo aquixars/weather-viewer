@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TestTasks.DS.WeatherViewer.Models.DBEntities;
-using TestTasks.DS.WeatherViewer.Pages;
+using WeatherViewer.Models.DBEntities;
+using WeatherViewer.Pages;
 
-namespace TestTasks.DS.WeatherViewer.Repositories
+namespace WeatherViewer.Repositories
 {
     public class WeatherArchiveRecordsRepository : IDisposable
     {

@@ -1,5 +1,5 @@
-using TestTasks.DS.WeatherViewer.Models.DBEntities;
-using TestTasks.DS.WeatherViewer.Repositories;
+using WeatherViewer.Models.DBEntities;
+using WeatherViewer.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

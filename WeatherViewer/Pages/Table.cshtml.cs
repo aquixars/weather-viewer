@@ -1,6 +1,6 @@
-using TestTasks.DS.WeatherViewer.Models.DBEntities;
+using WeatherViewer.Models.DBEntities;
 
-namespace TestTasks.DS.WeatherViewer.Pages
+namespace WeatherViewer.Pages
 {
     public class PageInfo
     {

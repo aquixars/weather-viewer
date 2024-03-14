@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TestTasks.DS.WeatherViewer.Pages;
-using TestTasks.DS.WeatherViewer.Repositories;
+using WeatherViewer.Pages;
+using WeatherViewer.Repositories;
 
-namespace TestTasks.DS.WeatherViewer.Controllers
+namespace WeatherViewer.Controllers
 {
     [Route("[controller]/[action]")]
     public class ReadController : Controller

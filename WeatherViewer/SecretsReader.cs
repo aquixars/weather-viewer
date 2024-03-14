@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace TestTasks.DS.WeatherViewer;
+namespace WeatherViewer;
 
 public class SecretsReader
 {

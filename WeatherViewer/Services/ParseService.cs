@@ -1,7 +1,7 @@
 ﻿using NPOI.SS.UserModel;
-using TestTasks.DS.WeatherViewer.Models.DBEntities;
+using WeatherViewer.Models.DBEntities;
 
-namespace TestTasks.DS.WeatherViewer.Services
+namespace WeatherViewer.Services
 {
     public static class ParseService
     {
@@ -62,7 +62,7 @@ namespace TestTasks.DS.WeatherViewer.Services
             }
         }
 
-        private static T ChangeType<T>(this object value)
+        private static T? ChangeType<T>(this object value)
         {
             var t = typeof(T);
 

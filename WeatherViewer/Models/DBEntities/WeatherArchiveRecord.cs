@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TestTasks.DS.WeatherViewer.Models.DBEntities;
+namespace WeatherViewer.Models.DBEntities;
 
 public partial class WeatherArchiveRecord
 {

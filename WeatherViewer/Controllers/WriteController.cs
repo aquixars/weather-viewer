@@ -2,12 +2,12 @@
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using TestTasks.DS.WeatherViewer.Models.DBEntities;
-using TestTasks.DS.WeatherViewer.Pages;
-using TestTasks.DS.WeatherViewer.Repositories;
-using TestTasks.DS.WeatherViewer.Services;
+using WeatherViewer.Models.DBEntities;
+using WeatherViewer.Pages;
+using WeatherViewer.Repositories;
+using WeatherViewer.Services;
 
-namespace TestTasks.DS.WeatherViewer.Controllers
+namespace WeatherViewer.Controllers
 {
     [Route("[controller]/[action]")]
     public class WriteController : Controller
