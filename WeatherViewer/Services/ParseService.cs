@@ -16,7 +16,7 @@ namespace WeatherViewer.Services
 
             var result = new WeatherArchiveRecord()
             {
-                Created = DateTime.Parse($"{GetCellValue(tableRow.GetCell(0, MissingCellPolicy.RETURN_NULL_AND_BLANK))} {GetCellValue(tableRow.GetCell(1, MissingCellPolicy.RETURN_NULL_AND_BLANK))}"),
+                Created = DateTime.Parse($"{GetCellStringValue(tableRow.GetCell(0, MissingCellPolicy.RETURN_NULL_AND_BLANK))} {GetCellStringValue(tableRow.GetCell(1, MissingCellPolicy.RETURN_NULL_AND_BLANK))}"),
                 Temperature = GetCellValueFromRow<decimal?>(tableRow, 2),
                 Humidity = GetCellValueFromRow<decimal?>(tableRow, 3),
                 DewPoint = GetCellValueFromRow<decimal?>(tableRow, 4),
@@ -35,7 +35,7 @@ namespace WeatherViewer.Services
         private static T? GetCellValueFromRow<T>(IRow row, int cellIndex)
         {
             var cell = row.GetCell(cellIndex, MissingCellPolicy.RETURN_NULL_AND_BLANK);
-            var cellValue = GetCellValue(cell);
+            var cellValue = GetCellStringValue(cell);
             if (string.IsNullOrWhiteSpace(cellValue))
             {
                 return default;
@@ -43,7 +43,7 @@ namespace WeatherViewer.Services
             return cellValue.ChangeType<T>();
         }
 
-        private static string GetCellValue(ICell cell)
+        private static string GetCellStringValue(ICell cell)
         {
             if (cell is null)
             {
@@ -65,17 +65,14 @@ namespace WeatherViewer.Services
         private static T? ChangeType<T>(this object value)
         {
             var t = typeof(T);
-
             if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
                 if (value == null)
                 {
                     return default;
                 }
-
                 t = Nullable.GetUnderlyingType(t);
             }
-
             return (T)Convert.ChangeType(value, t);
         }
     }
