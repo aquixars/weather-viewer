@@ -1,0 +1,3 @@
+- Stack: .NET 8.0, C# + Razor
+- Excel reading: NPOI
+- Database: MS SQL Server + EF Core (database first, script file createDbScript.sql included)
