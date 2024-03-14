@@ -128,9 +128,11 @@ namespace WeatherViewer.Controllers
             using (FileStream fileStream = new FileStream(file.FullName, FileMode.Open, FileAccess.Read))
             {
                 if (file.Extension.ToLowerInvariant() == ".xls")
+                {
                     return new HSSFWorkbook(fileStream); // excel 97-2003
-                else
-                    return new XSSFWorkbook(fileStream); // other
+                }
+
+                return new XSSFWorkbook(fileStream); // other
             }
         }
     }

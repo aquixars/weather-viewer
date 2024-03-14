@@ -31,10 +31,10 @@ namespace WeatherViewer.Controllers
                 year = 0;
             }
 
-            var recordsData = await _recordsRepository.GetAllByPageModel(pageNumber, pageSize, month, year);
+            var (records, totalCount) = await _recordsRepository.GetAllByPageModel(pageNumber, pageSize, month, year);
 
-            tableModel.Records = recordsData.records;
-            tableModel.PageInfo = new PageInfo(recordsData.totalCount, pageNumber, pageSize);
+            tableModel.Records = records;
+            tableModel.PageInfo = new PageInfo(totalCount, pageNumber, pageSize);
             tableModel.FilterInfo = new FilterInfo() { Month = month, Year = year };
 
             return View("~/Pages/Table.cshtml", tableModel);
